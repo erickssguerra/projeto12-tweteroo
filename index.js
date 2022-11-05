@@ -5,7 +5,7 @@ const server = express()
 server.use(cors())
 server.use(express.json())
 
-const userInfo = []
+const userInfos = []
 
 const tweets = [
 	{
@@ -64,10 +64,16 @@ server.get("/tweets", (req, res) => {
 	res.send(tweets)
 })
 
+server.get("/tweets/:username", (req, res) => {
+	const username = req.params.username
+	const userTweets = tweets.filter(object => object.username === username)
+	res.send(userTweets)
+})
+
 server.post("/sign-up", (req, res) => {
 
 	const { username, avatar } = req.body
-	userInfo.push({ username, avatar })
+	userInfos.push({ username, avatar })
 
 	if (!username || !avatar) {
 		res.status(422).send("Todos os campos são obrigatórios!")
@@ -83,8 +89,8 @@ server.post("/tweets", (req, res) => {
 		res.status(422).send("Todos os campos são obrigatórios!")
 		return
 	}
-	
-	const user = userInfo.find(info => info.username === username)
+
+	const user = userInfos.find(info => info.username === username)
 	const avatar = user.avatar
 	tweets.unshift({ username, tweet, avatar })
 
