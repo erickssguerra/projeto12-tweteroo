@@ -1,71 +1,94 @@
 import express from "express"
 import cors from "cors"
 
-const app = express()
-app.use(cors())
+const server = express()
+server.use(cors())
+server.use(express.json())
 
-const usuario = {
-	username: 'bobesponja', 
-	avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info" 
-}
+const userInfo = []
 
 const tweets = [
 	{
 		username: "erick",
-			avatar: "https://s.gravatar.com/avatar/e08dfbb9cbab6ec22af90299c400036b?s=200",
-		  tweet: "olárrr"
+		avatar: "https://s.gravatar.com/avatar/e08dfbb9cbab6ec22af90299c400036b?s=200",
+		tweet: "olárrr"
 	},
-    {
-		username: "bobesponja",
-			avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
-		  tweet: "eu amo o hub"
+	{
+		username: "patrick",
+		avatar: "https://upload.wikimedia.org/wikipedia/pt/b/b1/Patrick_Estrela.png",
+		tweet: "eu odeio o hub"
 	},
-    {
-		username: "bobesponja",
-			avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
-		  tweet: "eu amo o hub"
+	{
+		username: "sandybochechas",
+		avatar: "https://assets.papelpop.com/wp-content/uploads/2021/05/sandy-bob-esponja.png",
+		tweet: "quem ta afim de caçar agua-vivas?"
 	},
-    {
-		username: "bobesponja",
-			avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
-		  tweet: "eu amo o hub"
+	{
+		username: "lulamolusco",
+		avatar: "https://cf.shopee.com.br/file/c5f7cf93461037798997592a698e7fea",
+		tweet: "eu quero tocar flauta e reclamar da vida"
 	},
-    {
-		username: "bobesponja",
-			avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
-		  tweet: "eu amo o hub"
+	{
+		username: "sirigueijo",
+		avatar: "https://i.pinimg.com/550x/c4/8b/1b/c48b1bedcef71689757ef0e0f19fcfdd.jpg",
+		tweet: "eu amo dinheiro"
 	},
-    {
-		username: "bobesponja",
-			avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
-		  tweet: "eu amo o hub"
+	{
+		username: "plankton",
+		avatar: "http://pm1.narvii.com/6738/0d700e090c890c04e2a14019cb356609d190c68av2_00.jpg",
+		tweet: "alguem sabe a formula do hamburguer de siri?"
 	},
-    {
-		username: "bobesponja",
-			avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
-		  tweet: "eu amo o hub"
+	{
+		username: "larrylagosta",
+		avatar: "https://t.ctcdn.com.br/HUV06WevURQNovPIV7H0It4q79c=/700x394/smart/filters:format(webp)/i445916.jpeg",
+		tweet: "eu amo fazer exercicios"
 	},
-    {
-		username: "bobesponja",
-			avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
-		  tweet: "eu amo o hub"
+	{
+		username: "perola",
+		avatar: "http://pm1.narvii.com/6382/43062c5065d0e1fc4065047e44ddd8708bec6d8f_00.jpg",
+		tweet: "eu amo ver o larry fazer exercicio <3"
 	},
-    {
-		username: "bobesponja",
-			avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
-		  tweet: "eu amo o hub"
+	{
+		username: "srapuff",
+		avatar: "https://pm1.narvii.com/6350/dda5a981d12aeb5ecb8c70105194dd7f27b973c9_hq.jpg",
+		tweet: "esses meus alunos um dia vão me matar"
 	},
-    {
-		username: "bobesponja",
-			avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
-		  tweet: "eu amo o hub"
+	{
+		username: "holandesvoador",
+		avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVE2omP_cEI-j4dYmcNqvwdKBreIM5NSwTACkJ0HnvdFQIo-Gml7dGIUJOif-7SOtJFBI&usqp=CAU",
+		tweet: "o sinistro holandes voador"
 	},
 ]
 
-app.get("/tweets", (req, res) => {
-res.send(tweets)
+server.get("/tweets", (req, res) => {
+	res.send(tweets)
 })
 
-app.listen(5000, () => {
-    console.log("You're connected to port 5000!")
+server.post("/sign-up", (req, res) => {
+
+	const { username, avatar } = req.body
+	userInfo.push({ username, avatar })
+
+	if (!username || !avatar) {
+		res.status(422).send("Todos os campos são obrigatórios!")
+		return
+	}
+	res.status(201).send("OK")
+})
+
+server.post("/tweets", (req, res) => {
+
+	const { username, tweet } = req.body
+	if (!tweet || !username) {
+		res.status(422).send("Todos os campos são obrigatórios!")
+		return
+	}
+	const user = userInfo.find(info => info.username === username)
+	const avatar = user.avatar
+	tweets.unshift({ username, tweet, avatar })
+	res.status(201).send("OK")
+})
+
+server.listen(5000, () => {
+	console.log("You're connected in port 5000!")
 })
