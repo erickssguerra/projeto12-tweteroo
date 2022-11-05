@@ -83,9 +83,11 @@ server.post("/tweets", (req, res) => {
 		res.status(422).send("Todos os campos são obrigatórios!")
 		return
 	}
+	
 	const user = userInfo.find(info => info.username === username)
 	const avatar = user.avatar
 	tweets.unshift({ username, tweet, avatar })
+
 	res.status(201).send("OK")
 })
 
