@@ -82,18 +82,14 @@ server.post("/sign-up", (req, res) => {
 	res.status(201).send("OK")
 })
 
+// só funciona para o front-end 2 (Bônus) 
 server.post("/tweets", (req, res) => {
 
-	const { username, tweet } = req.body
-	if (!tweet || !username) {
-		res.status(422).send("Todos os campos são obrigatórios!")
-		return
-	}
-
-	const user = userInfos.find(info => info.username === username)
-	const avatar = user.avatar
+	const { tweet } = req.body
+	const username = req.headers.user
+	const userInfo = userInfos.find(info => info.username === username)
+	const avatar = userInfo.avatar
 	tweets.unshift({ username, tweet, avatar })
-
 	res.status(201).send("OK")
 })
 
